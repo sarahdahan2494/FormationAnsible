@@ -1,0 +1,13 @@
+---
+- hosts: all 
+  become: true
+  tasks:
+  # - name: update distribition
+  #   apt:
+  #     update_cache: yes 
+  - name: install git
+    apt:
+      name:
+        - git
+        - nodejs
+        - npm 
