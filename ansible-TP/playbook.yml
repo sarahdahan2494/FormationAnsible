@@ -1,0 +1,46 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Installation des packages de base pour docker
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        update_cache: yes
+
+    # Ajouter la clé gpg pour la sécurité des échanges avec le serveur des packages docker
+    - name: ajout de la cle gpg
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+
+    # ajouter le repos pour chercher les packages de docker
+    - name: Ajout de l'adresse du repos pour les packages docker de debian
+      apt_repository:
+        repo: deb https://download.docker.com/linux/debian stretch stable
+        state: present
+    - name: Index new repo into the cache
+      apt:
+        name: "*"
+        state: latest
+        update_cache: yes
+        force_apt_get: yes
+    # installation des composants docker
+    - name: install docker components
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        update_cache: yes
+
+    # démarrage du service
+    - name: start docker service
+      service:
+        name: docker start
+        state: started
+        enabled: yes
